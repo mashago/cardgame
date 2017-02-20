@@ -116,18 +116,21 @@ World =
 
 		local side = 1
 		self:card_init_field(side, T_HERO, {1})
-		self:card_init_field(side, T_DECK, {22, 22, 22, 22, 22, 22, 22, 22, 22})
+		self:card_init_field(side, T_DECK, {22, 22, 22, 22, 22})
 		self:card_init_field(side, T_HAND, {22, 22, 22, 22, 22})
-		self:card_init_field(side, T_ALLY, {22, 22, 22, 22, 22})
+		self:card_init_field(side, T_ALLY, {22, 22, 22})
 
 		side = 2
 		self:card_init_field(side, T_HERO, {1})
-		self:card_init_field(side, T_DECK, {26, 26, 26, 26, 26, 26, 26, 26, 26})
+		self:card_init_field(side, T_DECK, {26, 26, 26, 26, 26})
 		self:card_init_field(side, T_HAND, {26, 26, 26, 26, 26})
-		self:card_init_field(side, T_ALLY, {26, 26, 26, 26, 26})
+		self:card_init_field(side, T_ALLY, {26, 26, 26})
 
 		return true
 	end, -- }
+
+	play_cmd = function(self, input_list)
+	end,
 	
 	print = function (self)
 		for k, v in ipairs(self.country_list) do
