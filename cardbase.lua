@@ -27,8 +27,16 @@ CardBase =
 
 	print = function (self)
 		local str = ""
-		str = string.format("%s(%d)[%d] cost:%d power:%d hp:%d"
-				, self.name or "nil", self.id or -1, self.index, self.cost or -1, self.power or -1, self.hp or -1)
+		str = string.format("%s(%d)[%d] cost:%d power:%d hp:%d s:%d f:%d"
+		, self.name or "nil"
+		, self.id or -1
+		, self.index
+		, self.cost or -1
+		, self.power or -1
+		, self.hp or -1
+		, self.side
+		, self.field
+		)
 		print(str)
 	end,
 }

@@ -111,7 +111,12 @@ function main()
 		or input_list[1] == 't' or input_list[1] == 'attack'
 		or input_list[1] == 'b' or input_list[1] == 'ability'
 		then
-			world:play_cmd(input_list)
+			local eff_list, err = world:play_cmd(input_list)
+			if eff_list == nil then
+				LOG(err)
+				break
+			end
+			print_eff_list(eff_list)
 			break
 		end
 		

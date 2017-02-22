@@ -1,11 +1,16 @@
 
+PHASE_SACRIFICE = 1
+PHASE_PLAY		= 2
+
 -- field index
-T_HERO 			= 1
-T_HAND 			= 2
-T_ALLY 			= 3
-T_SUPPORT 		= 4
-T_GRAVE 		= 5
-T_DECK 			= 6
+F_HERO 			= 1
+F_HAND 			= 2
+F_ALLY 			= 3
+F_SUPPORT 		= 4
+F_GRAVE 		= 5
+F_DECK 			= 6
+F_RES			= 7
+F_ATTACH		= 8
 
 g_field_name_map =
 {
@@ -14,7 +19,8 @@ g_field_name_map =
 	'ally',  	-- [3]
 	'support',  -- [4]
 	'grave',  	-- [5]
-	'deck',  	-- [6] newly added
+	'deck',  	-- [6]
+	'attach',	-- [7]
 }
 
 -- card type
@@ -75,4 +81,5 @@ ELEMENTAL = r_job_map['ELEMENTAL']  -- 64
 -- camp
 HUMAN	= r_job_map['HUMAN'] 	-- 256
 SHADOW	= r_job_map['SHADOW']	-- 512
+
 
