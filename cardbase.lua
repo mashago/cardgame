@@ -13,18 +13,6 @@ CardBase =
 		return object
 	end,
 
-	trigger_attack = function (self, ...)
-		print("call CardBase trigger_attack")
-	end,
-
-	trigger_defend = function (self, ...)
-		print("call CardBase trigger_defend")
-	end,
-
-	trigger_skill = function(self)
-		print("call CardBase trigger_skill")
-	end,
-
 	print = function (self)
 		local str = ""
 		str = string.format("%s(%d)[%d] cost:%d power:%d hp:%d s:%d f:%d"
@@ -42,3 +30,14 @@ CardBase =
 }
 CardBase.__index = CardBase
 
+function CardBase:trigger_attack(...)
+	print("call CardBase trigger_attack")
+end
+
+function CardBase:trigger_defend(...)
+	print("call CardBase trigger_defend")
+end
+
+function CardBase:trigger_skill()
+	print("call CardBase trigger_skill")
+end

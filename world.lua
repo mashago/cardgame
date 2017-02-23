@@ -141,8 +141,19 @@ World =
 
 	play_cmd = function(self, cmd_list) --{
 		local eff_list, err
-		if cmd_list[1] == 's' then
-			eff_list, err = self:action_sacrifice(cmd_list[2] or 0)
+		local cmd = cmd_list[1]
+		table.remove(cmd_list, 1)
+
+		if cmd == 's' then
+			eff_list, err = self:action_sacrifice(cmd_list[1])
+		elseif cmd == 'h' then
+			eff_list, err = self:action_hand(cmd_list[1])
+		elseif cmd == 'b' then
+			eff_list, err = self:action_ability(cmd_list)
+		elseif cmd == 't' then
+			eff_list, err = self:action_attack(cmd_list)
+		elseif cmd == 'n' then
+			eff_list, err = self:action_attack(cmd_list)
 		end
 		return eff_list, err
 	end, --}
@@ -199,6 +210,8 @@ end --}
 
 function World:action_sacrifice(index) --{
 
+	index = index or 0
+
 	if self.phase ~= PHASE_SACRIFICE then
 		return nil, ERROR_MSG('non sac phase')
 	end
@@ -221,7 +234,7 @@ function World:action_sacrifice(index) --{
 	end
 
 	if card.field ~= F_HAND then
-		return nil, ERROR_MSG('sac non hand %d')
+		return nil, ERROR_MSG('sac non hand')
 	end
 
 	-- card remove
@@ -240,4 +253,8 @@ function World:action_sacrifice(index) --{
 	effect_append(eff_list, self:action_phase(PHASE_PLAY))
 
 	return eff_list
+end --}
+
+function World:action_hand(index) --{
+
 end --}
