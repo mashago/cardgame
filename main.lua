@@ -105,11 +105,10 @@ function main()
 			break
 		end
 
-		if input_list[1] == 's' or input_list[1] == 'sac'
-		or input_list[1] == 'h' or input_list[1] == 'hand'
-		or input_list[1] == 'n' or input_list[1] == 'next'
-		or input_list[1] == 't' or input_list[1] == 'attack'
-		or input_list[1] == 'b' or input_list[1] == 'ability'
+		if input_list[1] == 's' -- sacrifice
+		or input_list[1] == 't' -- attack
+		or input_list[1] == 'b' -- ability or hand
+		or input_list[1] == 'n' -- next
 		then
 			local eff_list, err = world:play_cmd(input_list)
 			if eff_list == nil then

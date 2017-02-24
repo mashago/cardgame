@@ -33,7 +33,7 @@ World =
 		for side = 1, 2 do
 			-- country new and init
 			local country = Country:new()
-			if false == country:init(side) then
+			if false == country:init(self, side) then
 				printf('country[%d] init fail\n', side)
 				return false
 			end
@@ -75,23 +75,23 @@ World =
 
 			-- create and add hero card
 			local cid = deck[1][1]
-			local hero = card_factory:create_card(cid)
+			local hero = card_factory:create_card(cid, country)
 			if hero == nil then
 				printf('country[%d] hero%d nil\n', side, cid)
 				return false
 			end
 			self.all_card_map[hero.index] = hero
-			country:add_card(hero, F_HERO)
+			country:card_add(hero, F_HERO)
 
 			-- create and add normal card
 			for __, cid in ipairs(deck[2]) do
-				local card = card_factory:create_card(cid)
+				local card = card_factory:create_card(cid, country)
 				if card == nil then
 					printf('country[%d] card%d nil\n', side, cid)
 					return false
 				end
 				self.all_card_map[card.index] = card
-				country:add_card(card, F_DECK)
+				country:card_add(card, F_DECK)
 			end
 		end
 		
@@ -104,13 +104,13 @@ World =
 		local card_factory = self.card_factory
 		local country = self.country_list[side]
 		for __, cid in ipairs(card_list) do
-			local card = card_factory:create_card(cid)
+			local card = card_factory:create_card(cid, country)
 			if card == nil then
 				printf('country[%d] card%d nil\n', side, cid)
 				return false
 			end
 			self.all_card_map[card.index] = card
-			country:add_card(card, field_index)
+			country:card_add(card, field_index)
 		end
 		return true
 
@@ -138,25 +138,6 @@ World =
 
 		return true
 	end, -- }
-
-	play_cmd = function(self, cmd_list) --{
-		local eff_list, err
-		local cmd = cmd_list[1]
-		table.remove(cmd_list, 1)
-
-		if cmd == 's' then
-			eff_list, err = self:action_sacrifice(cmd_list[1])
-		elseif cmd == 'h' then
-			eff_list, err = self:action_hand(cmd_list[1])
-		elseif cmd == 'b' then
-			eff_list, err = self:action_ability(cmd_list)
-		elseif cmd == 't' then
-			eff_list, err = self:action_attack(cmd_list)
-		elseif cmd == 'n' then
-			eff_list, err = self:action_attack(cmd_list)
-		end
-		return eff_list, err
-	end, --}
 	
 	
 	print = function (self)
@@ -176,6 +157,23 @@ World =
 	end,
 }
 World.__index = World
+
+function World:play_cmd(cmd_list) --{
+	local eff_list, err
+	local cmd = cmd_list[1]
+	table.remove(cmd_list, 1)
+
+	if cmd == 's' then
+		eff_list, err = self:action_sacrifice(cmd_list[1])
+	elseif cmd == 't' then
+		eff_list, err = self:action_attack(cmd_list[1], cmd_list[2])
+	elseif cmd == 'b' then
+		eff_list, err = self:action_ability(cmd_list)
+	elseif cmd == 'n' then
+		eff_list, err = self:action_next(cmd_list)
+	end
+	return eff_list, err
+end --}
 	
 function World:index_card(index) --{
 	--[[
@@ -192,7 +190,7 @@ end --}
 
 function World:card_remove(card) --{
 
-	local country = self.country_list[card.side]
+	local country = card.residence
 	if country == nil then
 		return
 	end
@@ -229,7 +227,7 @@ function World:action_sacrifice(index) --{
 		return nil, ERROR_MSG('sac card nil')
 	end
 
-	if card.side ~= self.current then
+	if card.residence.side ~= self.current then
 		return nil, ERROR_MSG('sac oppo card')
 	end
 
@@ -255,6 +253,95 @@ function World:action_sacrifice(index) --{
 	return eff_list
 end --}
 
-function World:action_hand(index) --{
+function World:check_playable(card, is_ability) --{
+	return true
+end --}
 
+function World:check_target(card, is_ability) --{
+	return true
+end --}
+
+function World:check_can_defend(card) --{
+	return true
+end --}
+
+function World:check_can_attack(card) --{
+	return true
+end --}
+
+function World:action_damage(src, target, power) --{
+end --}
+
+function World:action_attack_one(src, target, is_defend) --{
+	local eff_list = {}
+	local eff_list2 = {}
+
+	local power = src:get_power()
+	local dtype = src:get_dtype()
+
+
+end --}
+
+function World:action_attack(src_index, target_index) --{
+
+	if src_index == nil or src_index == 0 then
+		return nil, ERROR_MSG('attack: no src')
+	end
+	if target_index == nil or target_index == 0 then
+		return nil, ERROR_MSG('attack: no target')
+	end
+
+	local src = self:index_card(src_index)
+	if src == nil then
+		return nil, ERROR_MSG('attack: src nil')
+	end
+	local target = self:index_card(target_index)
+	if target == nil then
+		return nil, ERROR_MSG('attack: target nil')
+	end
+
+	local flag, msg = self:check_playable(src, false)
+	if flag == false then
+		return nil, ERROR_MSG('attack: %s', msg)
+	end
+
+	flag, msg = self:check_target(target, false)
+	if flag == false then
+		return nil, ERROR_MSG('attack: %s', msg)
+	end
+
+	local eff_list = {}
+	local eff_list2 = {}
+
+	if src.ambush == true or target.defender ~= true then
+		eff_list2 = action_attack_one(src, target, false)
+		table_append(eff_list, eff_list2)
+
+		if src.ambush then
+			-- target cannot defend
+			return eff_list
+		end
+
+		if check_can_defend(target) ~= true then
+			return eff_list
+		end
+
+		eff_list2 = action_attack_one(target, src, true)
+		table_append(eff_list, eff_list2)
+	else
+		-- defender defend first
+		if check_can_defind(target) then
+			eff_list2 = action_attack_one(target, src, true)
+			table_append(eff_list, eff_list2)
+		end
+
+		if check_can_attack(src) ~= true then
+			return eff_list
+		end
+
+		eff_list2 = action_attack_one(src, target, false)
+		table_append(eff_list, eff_list2)
+	end
+
+	return eff_list
 end --}

@@ -5,7 +5,8 @@ Country =
 	side = -1,
 	resource = 0,
 	resource_max = 0,
-	field_list = {},
+	field_list = nil,
+	world = nil,
 
 	new = function (self)
 		local object = {}
@@ -13,8 +14,9 @@ Country =
 		return object
 	end,
 
-	init = function (self, _side)
-		self.side = _side
+	init = function (self, world, side)
+		self.world = world
+		self.side = side
 		self.field_list = {}
 		self.field_list[F_HERO] = {}
 		self.field_list[F_HAND] = {}
@@ -50,10 +52,10 @@ function Country:index_card(index) --{
 	return nil
 end --}
 
-function Country:add_card(card, field_index)
+function Country:card_add(card, field_index)
 	local t = self.field_list[field_index]
 	t[#t+1] = card
-	card.side = self.side
+	card.residence = self
 	card.field = field_index
 end
 
