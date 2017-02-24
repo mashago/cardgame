@@ -279,6 +279,9 @@ function World:action_attack_one(src, target, is_defend) --{
 	local power = src:get_power()
 	local dtype = src:get_dtype()
 
+	src:trigger_attack(is_defend)
+	
+	self:action_damage(src, target, power)
 
 end --}
 
@@ -313,11 +316,14 @@ function World:action_attack(src_index, target_index) --{
 	local eff_list = {}
 	local eff_list2 = {}
 
-	if src.ambush == true or target.defender ~= true then
-		eff_list2 = action_attack_one(src, target, false)
+	local src_ambush = src:is_ambush()
+	local target_defender = target:is_defender()
+
+	if target_defender ~= true or (src_ambush == true and target_defender == true) then
+		eff_list2 = self:action_attack_one(src, target, false)
 		table_append(eff_list, eff_list2)
 
-		if src.ambush then
+		if src_ambush then
 			-- target cannot defend
 			return eff_list
 		end
@@ -326,12 +332,12 @@ function World:action_attack(src_index, target_index) --{
 			return eff_list
 		end
 
-		eff_list2 = action_attack_one(target, src, true)
+		eff_list2 = self:action_attack_one(target, src, true)
 		table_append(eff_list, eff_list2)
 	else
 		-- defender defend first
 		if check_can_defind(target) then
-			eff_list2 = action_attack_one(target, src, true)
+			eff_list2 = self:action_attack_one(target, src, true)
 			table_append(eff_list, eff_list2)
 		end
 
@@ -339,7 +345,7 @@ function World:action_attack(src_index, target_index) --{
 			return eff_list
 		end
 
-		eff_list2 = action_attack_one(src, target, false)
+		eff_list2 = self:action_attack_one(src, target, false)
 		table_append(eff_list, eff_list2)
 	end
 

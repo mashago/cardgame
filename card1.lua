@@ -28,7 +28,7 @@ Card1 =
 	-- tid is the num id, correspond to target_list[tid]
 	-- normally, we should check something out of the scope
 	-- in target_list[tid]
-	trigger_target_validate = function(self, pside, target, tid)
+	trigger_target_validate = function(self, target, tid)
 	end,
 
 	trigger_skill = function(self)

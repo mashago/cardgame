@@ -19,18 +19,29 @@ CardBase =
 
 	print = function (self)
 		local str = ""
-		str = string.format("%s(%d)[%d] cost:%d power:%d[%d] hp:%d [r:%d f:%d h:%d]"
-		, self.name or "nil"
-		, self.id or -1
+		str = string.format("[%d]%s(%d) cost:%d power:%d[%d] hp:%d "
 		, self.index
+		, self.name or "nil"
+		, self.id
 		, self.cost or -1
 		, self:get_power()
 		, self:get_dtype()
 		, self.hp or -1
+		)
+
+		if self:is_ambush() then
+			str = str .. '[AM]'
+		end
+		if self:is_defender() then
+			str = str .. '[DEF]'
+		end
+
+		str = str .. string.format(" [r:%d f:%d h:%d]"
 		, self.residence.side
 		, self.field
 		, self.home.side
 		)
+
 		print(str)
 	end,
 }
@@ -94,6 +105,54 @@ function CardBase:get_dtype() --{
 	end
 
 	return dtype
+end --}
+
+function CardBase:is_ambush() --{
+	local ambush = self.ambush or false
+	if self.ctype == ATTACH then
+		return ambush
+	end
+
+	if self.ctype == HERO then
+		local country = self.residence
+		for k, v in ipairs(country.field_list[F_SUPPORT]) do
+			if v.ctype == WEAPON then
+				-- assume only one weapon
+				ambush = v:is_ambush() or ambush
+				break;
+			end
+		end
+	end
+
+	for k, v in ipairs(self.attach_list or {}) do
+		ambush = v:is_ambush() or ambush
+	end
+
+	return ambush
+end --}
+
+function CardBase:is_defender() --{
+	local defender = self.defender or false
+	if self.ctype == ATTACH then
+		return defender
+	end
+
+	if self.ctype == HERO then
+		local country = self.residence
+		for k, v in ipairs(country.field_list[F_SUPPORT]) do
+			if v.ctype == WEAPON then
+				-- assume only one weapon
+				defender = v:is_defender() or defender
+				break;
+			end
+		end
+	end
+
+	for k, v in ipairs(self.attach_list or {}) do
+		defender = v:is_defender() or defender
+	end
+
+	return defender
 end --}
 
 function CardBase:trigger_attack(...)
