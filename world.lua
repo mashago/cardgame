@@ -170,7 +170,7 @@ function World:play_cmd(cmd_list) --{
 	elseif cmd == 'b' then
 		eff_list, err = self:action_ability(cmd_list)
 	elseif cmd == 'n' then
-		eff_list, err = self:action_next(cmd_list)
+		eff_list, err = self:action_next()
 	end
 	return eff_list, err
 end --}
@@ -261,14 +261,6 @@ function World:check_target(card, is_ability) --{
 	return true
 end --}
 
-function World:check_can_defend(card) --{
-	return true
-end --}
-
-function World:check_can_attack(card) --{
-	return true
-end --}
-
 function World:action_damage(src, target, power) --{
 end --}
 
@@ -279,7 +271,19 @@ function World:action_attack_one(src, target, is_defend) --{
 	local power = src:get_power()
 	local dtype = src:get_dtype()
 
-	src:trigger_attack(is_defend)
+	src:trigger_attack()
+
+	for _, country in ipairs(self.country_list) do
+		for __, card in ipairs(country.field_list[F_HERO]) do
+			card:trigger_other_attack()
+		end
+		for __, card in ipairs(country.field_list[F_ALLY]) do
+			card:trigger_other_attack()
+		end
+		for __, card in ipairs(country.field_list[F_SUPPORT]) do
+			card:trigger_other_attack()
+		end
+	end
 	
 	self:action_damage(src, target, power)
 
@@ -328,7 +332,7 @@ function World:action_attack(src_index, target_index) --{
 			return eff_list
 		end
 
-		if check_can_defend(target) ~= true then
+		if target:can_defend() ~= true then
 			return eff_list
 		end
 
@@ -336,12 +340,12 @@ function World:action_attack(src_index, target_index) --{
 		table_append(eff_list, eff_list2)
 	else
 		-- defender defend first
-		if check_can_defind(target) then
+		if target:can_defind() then
 			eff_list2 = self:action_attack_one(target, src, true)
 			table_append(eff_list, eff_list2)
 		end
 
-		if check_can_attack(src) ~= true then
+		if src:can_attack() ~= true then
 			return eff_list
 		end
 
@@ -350,4 +354,10 @@ function World:action_attack(src_index, target_index) --{
 	end
 
 	return eff_list
+end --}
+
+function World:action_ability(cmd_list) --{
+end --}
+
+function World:action_next() --{
 end --}

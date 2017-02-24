@@ -47,6 +47,7 @@ CardBase =
 }
 CardBase.__index = CardBase
 
+-- ATTRIBUTE GET --{
 function CardBase:get_power() --{
 	local total = 0
 
@@ -106,7 +107,9 @@ function CardBase:get_dtype() --{
 
 	return dtype
 end --}
+-- ATTRIBUTE GET --}
 
+-- ATTRIBUTE CHECK --{
 function CardBase:is_ambush() --{
 	local ambush = self.ambush or false
 	if self.ctype == ATTACH then
@@ -154,9 +157,35 @@ function CardBase:is_defender() --{
 
 	return defender
 end --}
+-- ATTRIBUTE CHECK --}
+
+-- LOGIC CHECK --{
+function CardBase:can_attack(...)
+	return true
+end
+function CardBase:can_defend(...)
+	return true
+end
+-- LOGIC CHECK --}
+
+-- TRIGGER --{
+function CardBase:trigger_attack_base(...)
+	print("call CardBase trigger_attack_base")
+end
 
 function CardBase:trigger_attack(...)
 	print("call CardBase trigger_attack")
+
+	self:trigger_attack_base(...)
+
+	for _, v in ipairs(self.attach_list or {}) do
+		v:trigger_attack_base(...)
+	end
+
+end
+
+function CardBase:trigger_other_attack(...)
+	print("call CardBase trigger_other_attack")
 end
 
 function CardBase:trigger_defend(...)
@@ -166,3 +195,4 @@ end
 function CardBase:trigger_skill()
 	print("call CardBase trigger_skill")
 end
+-- TRIGGER --}
