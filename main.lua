@@ -1,4 +1,14 @@
 
+
+function init_lua_path()
+	local all_path = {}
+	table.insert(all_path, package.path)
+	table.insert(all_path, "./card/?.lua")
+	package.path = table.concat(all_path, ';')
+	print(package.path)
+end
+init_lua_path()
+
 require("util")
 require("card1")
 require("card22")

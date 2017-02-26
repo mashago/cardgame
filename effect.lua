@@ -12,7 +12,7 @@ function eff_resource_max_offset(side, offset)
 end
 
 function eff_leave(index)
-	return {'remove', index=index}
+	return {'leave', index=index}
 end
 
 function eff_join(index, side, field)

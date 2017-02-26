@@ -37,11 +37,13 @@ CardBase =
 			str = str .. '[DEF]'
 		end
 
+		--[[
 		str = str .. string.format(" [r:%d f:%d h:%d]"
-		, self.residence.side
+		, (self.residence.side
 		, self.field
 		, self.home.side
 		)
+		--]]
 
 		print(str)
 	end,
@@ -52,6 +54,16 @@ function CardBase:init(index, world, home)
 	self.index = index
 	self.world = world
 	self.home = home
+end
+
+function CardBase:refresh()
+	local raw_card = getmetatable(self)
+	self.hp = raw_card.hp
+	self.power = raw_card.power
+	if self.attach_list ~= nil and #self.attach_list > 0 then
+		LOG_ERROR('refresh: card attach_list not nil %d', self.index)
+	end
+	self.attach_list = nil
 end
 
 CardBase.get_power = nil
@@ -303,7 +315,9 @@ end
 function CardBase:action_grave()
 	-- attach card action grave
 	-- action move
-	self:action_move(self.home, F_GRAVE)
+	self:leave()
+	self:refresh()
+	self:join(self.home, F_GRAVE)
 	-- action refresh
 end
 

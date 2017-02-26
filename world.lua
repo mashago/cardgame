@@ -167,13 +167,13 @@ function World:logic_init_test() -- {
 	self:card_init_field(side, F_HERO, {1})
 	self:card_init_field(side, F_DECK, {22, 22, 22, 22, 22})
 	self:card_init_field(side, F_HAND, {22, 22, 22})
-	self:card_init_field(side, F_ALLY, {22, 22})
+	self:card_init_field(side, F_ALLY, {22, 26})
 
 	side = 2
 	self:card_init_field(side, F_HERO, {1})
 	self:card_init_field(side, F_DECK, {26, 26, 26, 26, 26})
 	self:card_init_field(side, F_HAND, {26, 26, 26})
-	self:card_init_field(side, F_ALLY, {26, 26})
+	self:card_init_field(side, F_ALLY, {22, 26})
 
 	return true
 end -- }
@@ -260,6 +260,15 @@ function World:play_sacrifice(index) --{
 	self:phase_change(PHASE_PLAY)
 
 	return true
+end --}
+
+function World:play_summon(index) --{
+	local card = self:index_card(index)
+	if card == nil then
+		return false, ERROR_MSG('summon card nil')
+	end
+
+	card:action_move(card.residence, F_ALLY)
 end --}
 
 function World:check_attack(src, target)
@@ -354,7 +363,12 @@ function World:play_cmd(cmd_list) --{
 
 	if cmd == 'x' then
 		flag, err = self:play_sacrifice(cmd_list[1])
-	elseif cmd == 's' then
+	end
+
+	if self.phase ~= PHASE_PLAY then
+		return false, ERROR_MSG('in phase sacrifice')
+	end
+	if cmd == 's' then
 		flag, err = self:play_summon(cmd_list[1])
 	elseif cmd == 't' then
 		flag, err = self:play_attack(cmd_list[1], cmd_list[2])
