@@ -87,7 +87,8 @@ g_field_name_map =
 	'support',  -- [4]
 	'grave',  	-- [5]
 	'deck',  	-- [6]
-	'attach',	-- [7]
+	'res',  	-- [7]
+	'attach',	-- [8]
 }
 
 -- CARD TYPE

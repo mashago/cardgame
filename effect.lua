@@ -1,13 +1,4 @@
 
-function eff_energy_offset(offset, s)
-	return {'energy', offset=offset, side=s}
-end
-
--- obsolete?
-function eff_energy_value(value, s)
-	return {'energy_value', value=value, side=s}
-end
-
 function eff_resource_value(value, s)
 	return {'resource_value', value=value, side=s}
 end
@@ -20,8 +11,32 @@ function eff_resource_max_offset(side, offset)
 	return {'resource_max', side=side, offset=offset}
 end
 
+function eff_leave(index)
+	return {'remove', index=index}
+end
+
+function eff_join(index, side, field)
+	return {'join', index=index, side=side, field=field}
+end
+
+function eff_attack(src_index, target_index, power, dtype)
+	return {'attack', src_index=src_index, target_index=target_index, power=power, dtype=dtype}
+end
+
+function eff_defend(src_index, target_index, power, dtype)
+	return {'defend', src_index=src_index, target_index=target_index, power=power, dtype=dtype}
+end
+
+function eff_energy_offset(offset, s)
+	return {'energy', offset=offset, side=s}
+end
+
+function eff_energy_value(value, s)
+	return {'energy_value', value=value, side=s}
+end
 
 ----- card move related
+
 function eff_add(id, index) -- obsolete ?
 	return {'add', id=id, index=index}
 end
@@ -52,8 +67,8 @@ end
 
 -- index = target card to attach ( Puwen )
 -- attach = attach card index(Extra Sharp), for virtual card set 0
-function eff_attach(index, attach, id, acid)
-	return {'attach', target_index=index, attach=attach, id=id, acid=acid}
+function eff_attach(index, attach)
+	return {'attach', index=index, target_index=target_index}
 end
 
 function eff_card(index, id) -- for display only

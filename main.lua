@@ -105,17 +105,18 @@ function main()
 			break
 		end
 
-		if input_list[1] == 's' -- sacrifice
+		if input_list[1] == 'x' -- sacrifice
+		or input_list[1] == 's' -- summon
 		or input_list[1] == 't' -- attack
-		or input_list[1] == 'b' -- ability or hand
+		or input_list[1] == 'b' -- ability
 		or input_list[1] == 'n' -- next
 		then
-			local eff_list, err = world:play_cmd(input_list)
-			if eff_list == nil then
+			local flag, err = world:play_cmd(input_list)
+			if flag == false then
 				LOG(err)
 				break
 			end
-			print_eff_list(eff_list)
+			print_eff_list(world.eff_list)
 			break
 		end
 		

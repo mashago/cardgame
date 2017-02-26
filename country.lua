@@ -24,7 +24,7 @@ Country =
 		self.field_list[F_SUPPORT] = {}
 		self.field_list[F_GRAVE] = {}
 		self.field_list[F_DECK] = {}
-		-- self.field_list[F_ATTACH] = {}
+		self.field_list[F_RES] = {}
 	end,
 
 	print = function (self)
@@ -41,6 +41,10 @@ Country =
 }
 Country.__index = Country
 
+Country.card_add = nil
+Country.card_remove = nil
+
+--[[
 function Country:index_card(index) --{
 	for _, f in ipairs(self.field_list) do
 		for _, card in ipairs(f) do
@@ -51,6 +55,7 @@ function Country:index_card(index) --{
 	end
 	return nil
 end --}
+--]]
 
 function Country:card_add(card, field_index)
 	local t = self.field_list[field_index]
@@ -74,5 +79,4 @@ function Country:card_remove(card) --{
 		end
 	end
 	card.field = 0
-
 end --}
